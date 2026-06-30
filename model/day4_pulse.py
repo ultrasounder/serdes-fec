@@ -1,37 +1,15 @@
 import numpy as np, matplotlib.pyplot as plt, scipy.signal as sig
 from sys import path; path.append("../model")
-from channel import rlgc_gamma, insertion_loss_db, loss_components_db_per_m
+from channel import s4p_to_pulse
 
-"""Link parameters(match Day 3, loss-tangent form)"""
-R0, L, C, tand = 17.27, 250e-9, 100e-12, 0.02
-length = 0.30 
-baud = 10e9
-sps = 32
-UI = 1/baud
-
-"""build a dense one-sided H(f) on an FFT grid"""
-
-N = 8192 # freq points(one-sided)
-fs = baud*sps # sample rate
-f = np.linspace(0, fs/2, N) # one-sided freq vector
-f[0] = f[1]/10 # avoid DC singularity
-gamma = rlgc_gamma(f, R0, L, C, tand)
-H = np.exp(-gamma*length) # one-sided H(f)
-
-"""--- one UI rectangular input, then channel filter ----"""
-"""impulse-style: take channel impulse response via irfft"""
-h = np.fft.irfft(H, n=2*(N-1)) # channel impulse response
-h = h/np.max(np.abs(h)) # normalize to unity peak
-
-"""pulse response = response to a single UI-wide rectangle -----"""
-rect = np.ones(sps) 
-pulse = np.convolve(h, rect)[:4000] # truncate to 4000 samples
-pulse = pulse/np.max(np.abs(pulse)) # normalize to unity peak
-
+"""Getting the actual pulse response from a .s4p file or a synthetic model"""
+baud = 10e9 # baud rate
+sps = 32 # samples per symbol
+pulse = s4p_to_pulse("model/peters_01_0605_B12_thru.s4p", baud, sps)  # Example values, replace with actual parameters
 """Cursor extraction: find the peak, then find the first zero crossing after the peak"""
 main_idx = np.argmax(pulse)
 def tap(k):
-    i = main_idx + k*sps # k-th UI after the main peak
+    i = main_idx + k* sps # k-th UI after the main peak
     return pulse[i] if 0 <=i  < len(pulse) else 0.0
 pre = [tap(-k) for k in range(1, 4)] # 3 pre-cursors
 post = [tap(k) for k in range(1, 9)] # 8 post-cursors
