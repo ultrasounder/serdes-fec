@@ -43,8 +43,11 @@ def s4p_to_pulse(path: str | None, baud: float, sps: int) -> np.ndarray:
         return _pulse_from_model(baud, sps)
     import skrf as rf
     ntwk = rf.Network(path)
-    ntwk.renumber([0,1,2,3], [0,2,1,3]); ntwk.se2gmm(p=2)
-    sdd21, f = ntwk.s[:,1,0], ntwk.f
+    # Peters files: ports 1,3 = inputs (P+/N tx), 2,4 = outputs (P+/N rx)
+    # skrf se2gmm wants [in+, in-, out+, out-] = port order 0,2,1,3
+    ntwk.renumber([0,1,2,3], [0,2,1,3]); 
+    ntwk.se2gmm(p=2)
+    sdd21, f = ntwk.s[:,1,0], ntwk.f #single ended to differential mixed- mode conversion
     N, fs = 4096, baud*sps
     fg = np.linspace(0, fs/2, N)
     H = np.interp(fg, f, sdd21, left=sdd21[0], right=0)
