@@ -4,7 +4,7 @@ from channel import s4p_to_pulse
 
 baud, sps = 10e9, 32
 CH = "peters_01_0605_B12_thru.s4p" #your -14dB channel; or None
-
+#CH = None
 pulse = s4p_to_pulse(CH, baud, sps)
 
 # -- build RX waveform: convolve random NRZ symbols with the pulse reposne ---
@@ -27,15 +27,25 @@ def eye_matrix(rx, sps, n_ui=2, skip=200):
     return usable.reshape(n, seg)
 eye = eye_matrix(rx, sps)
 
-# -- eye height/width at center phase ---
-center = sps//2                # Samppling instant within the UI
-col = eye[:, center]
-# separate by what the *center* symbol was(need aligned symbols)
-#simpler: measure opening as gap between upper and lower clouds
-top = col[col > 0].min() if (col>0).any() else 0
-bot = col[col < 0].max() if (col<0).any() else 0
-eye_h = top - bot
-print(f"eye height @center = {eye_h:.3f} (top={top:.3f}, bot={bot:.3f})")
+# -- eye height/width at center phase
+
+def eye_height_aligned(rx, syms, pulse, sps, skip=200):
+    delay=np.argmax(pulse)
+    idx = skip + np.arange(len(syms) - skip - 10)
+    samp = rx[delay + idx*sps]
+    s = syms[idx]
+    ones = samp[s > 0]
+    zeros = samp[s < 0]
+    #worst-case opening: lowest "1" minus highest "0"
+    eye_h = ones.min() - zeros.max()
+    #also useful: separation of the *means* (clean, outlier-robust)
+    eye_mean = ones.mean() - zeros.mean()
+    return eye_h, eye_mean, ones, zeros
+
+eye_h, eye_mean, ones, zeros = eye_height_aligned(rx, syms, pulse, sps)
+plt.title(f"Eye @10GBd (worst-case h={eye_h:.3f}, mean-sep={eye_mean:.3f})")
+plt.tight_layout();plt.savefig("day5_eye.png", dpi=120); plt.show()
+
 
 # plot
 t = np.linspace(0, 2, eye.shape[1])
@@ -56,7 +66,7 @@ def q(x):
     return 0.5*erfc(x/np.sqrt(2))
 sigma = 0.05 # RX Noise RMS start here and we will sweep
 ber = q((eye_h/2)/sigma) if eye_h > 0 else 0.5
-print(f"sigma={sigma}: eye_h={eye_h:.3f -> BER ~ {ber:.2e}}")
+print(f"sigma={sigma}: eye_h={eye_h:.3f} -> BER ~ {ber:.2e}")
 
 
 
