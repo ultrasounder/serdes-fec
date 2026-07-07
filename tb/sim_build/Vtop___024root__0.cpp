@@ -34,9 +34,15 @@ void Vtop___024root___ico_sequent__TOP__0(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.blink__DOT__clk = vlSelfRef.clk;
-    vlSelfRef.blink__DOT__rst = vlSelfRef.rst;
-    vlSelfRef.q = vlSelfRef.blink__DOT__q;
+    vlSelfRef.prbs7__DOT__clk = vlSelfRef.clk;
+    vlSelfRef.prbs7__DOT__rst = vlSelfRef.rst;
+    vlSelfRef.prbs7__DOT__en = vlSelfRef.en;
+    vlSelfRef.prbs7__DOT__fb = (1U & VL_REDXOR_32((3U 
+                                                   & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                                      >> 5U))));
+    vlSelfRef.prbs7__DOT__out = (1U & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                       >> 6U));
+    vlSelfRef.out = vlSelfRef.prbs7__DOT__out;
 }
 
 void Vtop___024root___eval_ico(Vtop___024root* vlSelf) {
@@ -45,9 +51,16 @@ void Vtop___024root___eval_ico(Vtop___024root* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     if ((1ULL & vlSelfRef.__VicoTriggered[0U])) {
-        vlSelfRef.blink__DOT__clk = vlSelfRef.clk;
-        vlSelfRef.blink__DOT__rst = vlSelfRef.rst;
-        vlSelfRef.q = vlSelfRef.blink__DOT__q;
+        vlSelfRef.prbs7__DOT__clk = vlSelfRef.clk;
+        vlSelfRef.prbs7__DOT__rst = vlSelfRef.rst;
+        vlSelfRef.prbs7__DOT__en = vlSelfRef.en;
+        vlSelfRef.prbs7__DOT__fb = (1U & VL_REDXOR_32(
+                                                      (3U 
+                                                       & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                                          >> 5U))));
+        vlSelfRef.prbs7__DOT__out = (1U & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                           >> 6U));
+        vlSelfRef.out = vlSelfRef.prbs7__DOT__out;
     }
 }
 
@@ -81,10 +94,10 @@ void Vtop___024root___eval_triggers_vec__act(Vtop___024root* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     vlSelfRef.__VactTriggered[0U] = (QData)((IData)(
-                                                    ((IData)(vlSelfRef.blink__DOT__clk) 
-                                                     & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__blink__DOT__clk__0)))));
-    vlSelfRef.__Vtrigprevexpr___TOP__blink__DOT__clk__0 
-        = vlSelfRef.blink__DOT__clk;
+                                                    ((IData)(vlSelfRef.prbs7__DOT__clk) 
+                                                     & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__prbs7__DOT__clk__0)))));
+    vlSelfRef.__Vtrigprevexpr___TOP__prbs7__DOT__clk__0 
+        = vlSelfRef.prbs7__DOT__clk;
 }
 
 bool Vtop___024root___trigger_anySet__act(const VlUnpacked<QData/*63:0*/, 1> &in) {
@@ -106,21 +119,53 @@ void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___nba_sequent__TOP__0\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Locals
+    CData/*6:0*/ __Vdly__prbs7__DOT__lfsr;
+    __Vdly__prbs7__DOT__lfsr = 0;
     // Body
-    vlSelfRef.blink__DOT__q = (1U & ((~ (IData)(vlSelfRef.blink__DOT__rst)) 
-                                     & (~ (IData)(vlSelfRef.blink__DOT__q))));
-    vlSelfRef.q = vlSelfRef.blink__DOT__q;
+    __Vdly__prbs7__DOT__lfsr = vlSelfRef.prbs7__DOT__lfsr;
+    if (vlSelfRef.prbs7__DOT__rst) {
+        __Vdly__prbs7__DOT__lfsr = 0x7fU;
+    } else if (vlSelfRef.prbs7__DOT__en) {
+        __Vdly__prbs7__DOT__lfsr = ((0x0000007eU & 
+                                     ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                      << 1U)) | (IData)(vlSelfRef.prbs7__DOT__fb));
+    }
+    vlSelfRef.prbs7__DOT__lfsr = __Vdly__prbs7__DOT__lfsr;
+    vlSelfRef.prbs7__DOT__fb = (1U & VL_REDXOR_32((3U 
+                                                   & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                                      >> 5U))));
+    vlSelfRef.prbs7__DOT__out = (1U & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                       >> 6U));
+    vlSelfRef.out = vlSelfRef.prbs7__DOT__out;
 }
 
 void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_nba\n"); );
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Locals
+    CData/*6:0*/ __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr;
+    __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr = 0;
     // Body
     if ((1ULL & vlSelfRef.__VnbaTriggered[0U])) {
-        vlSelfRef.blink__DOT__q = (1U & ((~ (IData)(vlSelfRef.blink__DOT__rst)) 
-                                         & (~ (IData)(vlSelfRef.blink__DOT__q))));
-        vlSelfRef.q = vlSelfRef.blink__DOT__q;
+        __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr 
+            = vlSelfRef.prbs7__DOT__lfsr;
+        if (vlSelfRef.prbs7__DOT__rst) {
+            __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr = 0x7fU;
+        } else if (vlSelfRef.prbs7__DOT__en) {
+            __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr 
+                = ((0x0000007eU & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                   << 1U)) | (IData)(vlSelfRef.prbs7__DOT__fb));
+        }
+        vlSelfRef.prbs7__DOT__lfsr = __Vinline__nba_sequent__TOP__0___Vdly__prbs7__DOT__lfsr;
+        vlSelfRef.prbs7__DOT__fb = (1U & VL_REDXOR_32(
+                                                      (3U 
+                                                       & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                                          >> 5U))));
+        vlSelfRef.prbs7__DOT__out = (1U & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                           >> 6U));
+        vlSelfRef.out = vlSelfRef.prbs7__DOT__out;
     }
 }
 
@@ -197,7 +242,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vtop___024root___dump_triggers__ico(vlSelfRef.__VicoTriggered, "ico"s);
 #endif
-            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/blink.v", 1, "", "DIDNOTCONVERGE: Input combinational region did not converge after '--converge-limit' of 10000 tries");
+            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/prbs7.v", 2, "", "DIDNOTCONVERGE: Input combinational region did not converge after '--converge-limit' of 10000 tries");
         }
         __VicoIterCount = ((IData)(1U) + __VicoIterCount);
         vlSelfRef.__VicoPhaseResult = Vtop___024root___eval_phase__ico(vlSelf);
@@ -209,7 +254,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vtop___024root___dump_triggers__act(vlSelfRef.__VnbaTriggered, "nba"s);
 #endif
-            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/blink.v", 1, "", "DIDNOTCONVERGE: NBA region did not converge after '--converge-limit' of 10000 tries");
+            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/prbs7.v", 2, "", "DIDNOTCONVERGE: NBA region did not converge after '--converge-limit' of 10000 tries");
         }
         __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
         vlSelfRef.__VactIterCount = 0U;
@@ -218,7 +263,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__act(vlSelfRef.__VactTriggered, "act"s);
 #endif
-                VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/blink.v", 1, "", "DIDNOTCONVERGE: Active region did not converge after '--converge-limit' of 10000 tries");
+                VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/prbs7.v", 2, "", "DIDNOTCONVERGE: Active region did not converge after '--converge-limit' of 10000 tries");
             }
             vlSelfRef.__VactIterCount = ((IData)(1U) 
                                          + vlSelfRef.__VactIterCount);
@@ -239,6 +284,9 @@ void Vtop___024root___eval_debug_assertions(Vtop___024root* vlSelf) {
     }
     if (VL_UNLIKELY(((vlSelfRef.rst & 0xfeU)))) {
         Verilated::overWidthError("rst");
+    }
+    if (VL_UNLIKELY(((vlSelfRef.en & 0xfeU)))) {
+        Verilated::overWidthError("en");
     }
 }
 #endif  // VL_DEBUG

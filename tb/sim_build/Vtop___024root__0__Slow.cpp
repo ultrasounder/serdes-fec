@@ -9,8 +9,8 @@ VL_ATTR_COLD void Vtop___024root___eval_static(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    vlSelfRef.__Vtrigprevexpr___TOP__blink__DOT__clk__0 
-        = vlSelfRef.blink__DOT__clk;
+    vlSelfRef.__Vtrigprevexpr___TOP__prbs7__DOT__clk__0 
+        = vlSelfRef.prbs7__DOT__clk;
 }
 
 VL_ATTR_COLD void Vtop___024root___eval_initial(Vtop___024root* vlSelf) {
@@ -44,7 +44,7 @@ VL_ATTR_COLD void Vtop___024root___eval_settle(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vtop___024root___dump_triggers__stl(vlSelfRef.__VstlTriggered, "stl"s);
 #endif
-            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/blink.v", 1, "", "DIDNOTCONVERGE: Settle region did not converge after '--converge-limit' of 10000 tries");
+            VL_FATAL_MT("/Users/ananth/Developer/serdes-fec/tb/../rtl/prbs7.v", 2, "", "DIDNOTCONVERGE: Settle region did not converge after '--converge-limit' of 10000 tries");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         vlSelfRef.__VstlPhaseResult = Vtop___024root___eval_phase__stl(vlSelf);
@@ -98,9 +98,16 @@ VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Body
     if ((1ULL & vlSelfRef.__VstlTriggered[0U])) {
-        vlSelfRef.blink__DOT__clk = vlSelfRef.clk;
-        vlSelfRef.blink__DOT__rst = vlSelfRef.rst;
-        vlSelfRef.q = vlSelfRef.blink__DOT__q;
+        vlSelfRef.prbs7__DOT__clk = vlSelfRef.clk;
+        vlSelfRef.prbs7__DOT__rst = vlSelfRef.rst;
+        vlSelfRef.prbs7__DOT__en = vlSelfRef.en;
+        vlSelfRef.prbs7__DOT__fb = (1U & VL_REDXOR_32(
+                                                      (3U 
+                                                       & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                                          >> 5U))));
+        vlSelfRef.prbs7__DOT__out = (1U & ((IData)(vlSelfRef.prbs7__DOT__lfsr) 
+                                           >> 6U));
+        vlSelfRef.out = vlSelfRef.prbs7__DOT__out;
     }
 }
 
@@ -149,7 +156,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__act(const VlUnpacked<QData/*63
         VL_DBG_MSGS("         No '" + tag + "' region triggers active\n");
     }
     if ((1U & (IData)(triggers[0U]))) {
-        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @(posedge blink.clk)\n");
+        VL_DBG_MSGS("         '" + tag + "' region trigger index 0 is active: @(posedge prbs7.clk)\n");
     }
 }
 #endif  // VL_DEBUG
@@ -162,10 +169,14 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     const uint64_t __VscopeHash = VL_MURMUR64_HASH(vlSelf->vlNamep);
     vlSelf->clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 16707436170211756652ull);
     vlSelf->rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 18209466448985614591ull);
-    vlSelf->q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 8861071527689086543ull);
-    vlSelf->blink__DOT__clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 4690322753635035322ull);
-    vlSelf->blink__DOT__rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 15175693800465067013ull);
-    vlSelf->blink__DOT__q = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7526948913319797822ull);
+    vlSelf->en = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7710216835639188562ull);
+    vlSelf->out = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 7519490245117619040ull);
+    vlSelf->prbs7__DOT__clk = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 2189542466191472326ull);
+    vlSelf->prbs7__DOT__rst = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9183770660020283615ull);
+    vlSelf->prbs7__DOT__en = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 1825704754943635308ull);
+    vlSelf->prbs7__DOT__out = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 6320042857049253059ull);
+    vlSelf->prbs7__DOT__lfsr = VL_SCOPED_RAND_RESET_I(7, __VscopeHash, 11620870114115528020ull);
+    vlSelf->prbs7__DOT__fb = VL_SCOPED_RAND_RESET_I(1, __VscopeHash, 9104217176210279679ull);
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VstlTriggered[__Vi0] = 0;
     }
@@ -175,7 +186,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VactTriggered[__Vi0] = 0;
     }
-    vlSelf->__Vtrigprevexpr___TOP__blink__DOT__clk__0 = 0;
+    vlSelf->__Vtrigprevexpr___TOP__prbs7__DOT__clk__0 = 0;
     for (int __Vi0 = 0; __Vi0 < 1; ++__Vi0) {
         vlSelf->__VnbaTriggered[__Vi0] = 0;
     }

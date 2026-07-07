@@ -16,15 +16,19 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop___024root final {
     // DESIGN SPECIFIC STATE
     VL_IN8(clk,0,0);
     VL_IN8(rst,0,0);
-    VL_OUT8(q,0,0);
-    CData/*0:0*/ blink__DOT__clk;
-    CData/*0:0*/ blink__DOT__rst;
-    CData/*0:0*/ blink__DOT__q;
+    VL_IN8(en,0,0);
+    VL_OUT8(out,0,0);
+    CData/*0:0*/ prbs7__DOT__clk;
+    CData/*0:0*/ prbs7__DOT__rst;
+    CData/*0:0*/ prbs7__DOT__en;
+    CData/*0:0*/ prbs7__DOT__out;
+    CData/*6:0*/ prbs7__DOT__lfsr;
+    CData/*0:0*/ prbs7__DOT__fb;
     CData/*0:0*/ __VstlFirstIteration;
     CData/*0:0*/ __VstlPhaseResult;
     CData/*0:0*/ __VicoFirstIteration;
     CData/*0:0*/ __VicoPhaseResult;
-    CData/*0:0*/ __Vtrigprevexpr___TOP__blink__DOT__clk__0;
+    CData/*0:0*/ __Vtrigprevexpr___TOP__prbs7__DOT__clk__0;
     CData/*0:0*/ __VactPhaseResult;
     CData/*0:0*/ __VnbaPhaseResult;
     IData/*31:0*/ __VactIterCount;
