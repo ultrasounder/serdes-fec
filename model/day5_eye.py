@@ -3,8 +3,8 @@ from sys import path; path.append("../model")
 from channel import s4p_to_pulse
 
 baud, sps = 10e9, 32
-CH = "peters_01_0605_B12_thru.s4p" #your -14dB channel; or None
-#CH = None
+#CH = "peters_01_0605_B12_thru.s4p" #your -14dB channel; or None
+CH = None
 pulse = s4p_to_pulse(CH, baud, sps)
 
 # -- build RX waveform: convolve random NRZ symbols with the pulse reposne ---
